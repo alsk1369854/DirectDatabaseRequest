@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajax Demo</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div>
+        <p>查詢 (select)</p>
+        <textarea id="SelectSql" rows="5" cols="33">SELECT * FROM package</textarea><br>
+        <!-- <input  type="text" value="SELECT * FROM package"> -->
+        <button onclick="doQuery()">Query</button>
+        <p>解果</p>
+        <ul id="SelectResult">
+        </ul>
+    </div>
+    <hr />
+    <div>
+        <p>更新 (insert, update, delete)</p>
+        <textarea id="UpdateSql" rows="5"
+            cols="33">INSERT INTO ACCOUNT(account_id, account_name, account_password, customer_id) VALUES(99,'testAccount', 'testAccount', 99)</textarea><br>
+        <button onclick="doUpdate()">Update</button>
+        <p>改變行數 : <span id="DBChange">0</span></p>
+    </div>
+
+
+    <script>
+        // Start ajax 請求範例 ---------------------------------------------------------------------
+        // const xhr = new XMLHttpRequest() // XMLHttpRequest 創建物件，用於發送ajax請求
+        // const url = 'http://127.0.0.1:8080/DatabaseRequest/Query?sql=SELECT * FROM package'
+        // xhr.open('GET', url, true) // 包裝請求
+        // xhr.send() // 發送請求
+        // // 請求到結果後要做什麼寫在這個 function 裡面
+        // xhr.onload = function () {
+        //     if (xhr.status === 200) { // 請求成功
+        //         var data = JSON.parse(this.responseText); // 將請求到的json資料，編譯成 javascript 物件
+        //         console.log(data); // 資料
+        //     } else { // 請求失敗
+        //         console.error(xhr.statusText); // 錯誤訊息
+        //     }
+        // }
+        // End ajax 請求範例 ---------------------------------------------------------------------
+
+        const xhr = new XMLHttpRequest()
+        const SelectSqlTag = document.getElementById("SelectSql")
+        const SelectResultTag = document.getElementById("SelectResult")
+        const UpdateSqlTag = document.getElementById("UpdateSql")
+        const DBChangeTag = document.getElementById("DBChange")
+        const QueryBaseUrl = 'http://127.0.0.1:8080/DatabaseRequest/Query?sql='
+        const UpdateBaseUrl = 'http://127.0.0.1:8080/DatabaseRequest/Update?sql='
+
+        const doQuery = () => {
+            const sql = SelectSqlTag.value.trim().replace(/[\r\n]/g,' ')
+			console.log("@SQL: ", sql)
+            const url = QueryBaseUrl + sql;
+            console.log("@API: ", url)
+            xhr.open('GET', url, true)
+            xhr.send()
+            xhr.onload = function () {
+                if (xhr.status === 200) { // 請求成功
+                    // console.log(this.responseText) // 請求回來的資料 JSON
+                    const data = JSON.parse(this.responseText); // 轉換成 javascript 物件
+                    console.log("@Data: ",data); // javascript 物件 資料
+
+                    // 展示到頁面作業...
+                    const queryResult = data.map(item => {
+                        let temp = "";
+                        for (let name in item) {
+                            temp += `${name}:${item[name]}<br>`
+                        }
+                        return `<li>${temp}</li>`
+                    })
+                    SelectResultTag.innerHTML = queryResult
+                } else { // 請求失敗
+                    console.error(xhr.statusText);
+                }
+
+            }
+        }
+
+        const doUpdate = () => {
+            const sql = UpdateSqlTag.value.trim().replace(/[\r\n]/g,' ')
+            console.log("@SQL: ", sql)
+            const url = UpdateBaseUrl + sql;
+            console.log("@API: ", url)
+            xhr.open('GET', url, true)
+            xhr.send()
+            xhr.onload = function () {
+                if (xhr.status === 200) { // 請求成功
+                    // console.log(this.responseText) // 請求回來的資料 JSON
+                    const data = JSON.parse(this.responseText); // 轉換成 javascript 物件
+                    console.log("@Data: ",data); // javascript 物件 資料
+
+                    // 展示到頁面作業...
+                    DBChangeTag.innerHTML = data[0].change
+                } else { // 請求失敗
+                    console.error(xhr.statusText);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

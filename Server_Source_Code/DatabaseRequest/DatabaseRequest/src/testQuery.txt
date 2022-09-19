@@ -1,0 +1,17 @@
+1. 查詢 (select) 回傳:查詢結果
+    http://127.0.0.1:8080/DatabaseRequest/Query?sql= (SQL 語句)
+1-1. 查詢
+    http://127.0.0.1:8080/DatabaseRequest/Query?sql=SELECT * FROM package
+
+2. 更新操作 (insert, update, delete) 回傳:資料庫改變行數
+    http://127.0.0.1:8080/DatabaseRequest/Update?sql= (SQL 語句)
+
+2-1. 新增
+    http://127.0.0.1:8080/DatabaseRequest/Update?sql=INSERT INTO ACCOUNT(account_id, account_name, account_password, customer_id) VALUES(99,'testAccount', 'testAccount', 99)
+
+2-2. 更新
+    http://127.0.0.1:8080/DatabaseRequest/Update?sql=UPDATE ACCOUNT SET account_name = 'updateId' WHERE account_id = 99
+
+2-3. 刪除
+    http://127.0.0.1:8080/DatabaseRequest/Update?sql=DELETE FROM ACCOUNT WHERE account_id = 99
+
